@@ -1,0 +1,137 @@
+CREATE TABLE Transaction (
+Transaction_ID integer NOT NULL,
+Transaction_Date date,
+Transaction_Workstation varchar(20),
+Transaction_Total_Amount numeric,
+Transaction_Payment_Method varchar(20),
+Employee_ID integer, 
+Store_ID integer,  
+Customer_ID integer, 
+PRIMARY KEY(Transaction_ID),
+FOREIGN KEY (Employee_ID) REFERENCES Employee(Employee_ID),
+FOREIGN KEY (Store_ID) REFERENCES Store(Store_ID),
+FOREIGN KEY (Customer_ID) REFERENCES Customer(Customer_ID));
+
+CREATE TABLE Store(
+Store_ID integer,
+Store_Phone_Number varchar(20),
+Store_Address varchar(255),
+Store_Name varchar(20),
+Store_Owner_Name varchar(50),
+PRIMARY KEY (Store_ID));
+
+CREATE TABLE Employee(
+Employee_ID integer,
+Employee_SSN varchar(20),
+Employee_Address varchar(255),
+Employee_Name varchar(20),
+PRIMARY KEY (Employee_ID));
+
+CREATE TABLE Product(
+Product_ID integer,
+Product_Type varchar(50) NOT NULL,
+Product_Name varchar(40) NOT NULL,
+Product_Price numeric,
+Product_Unit_Of_Measure varchar(40),
+PRIMARY KEY (Product_ID));
+
+CREATE TABLE Includes(
+Transaction_ID integer,
+Product_ID integer,
+Product_Quantity integer,
+PRIMARY KEY (Transaction_ID, Product_ID),
+FOREIGN KEY (Transaction_ID) REFERENCES Transaction (Transaction_ID),
+FOREIGN KEY (Product_ID) REFERENCES Product (Product_ID));
+
+CREATE TABLE Restock(
+Restock_ID integer,
+Store_ID integer,
+Product_ID integer,
+Restock_Quantity integer,
+Restock_Date date,
+PRIMARY KEY (Restock_ID),
+FOREIGN KEY (Store_ID) REFERENCES Store (Store_ID),
+FOREIGN KEY (Product_ID) REFERENCES Product (Product_ID));
+
+CREATE TABLE Customer (
+Customer_ID integer PRIMARY KEY,
+Customer_Name VARCHAR(50) NOT NULL,
+Customer_Membership VARCHAR(20) CHECK (Customer_Membership IN ('Gold', 'Silver', 'Bronze')),
+Customer_Address varchar(100),
+Customer_Age integer CHECK (Customer_Age > 0));
+
+INSERT INTO Employee VALUES
+(0001, '999-88-7777', '202 Broadway St', 'Julie Pumpkin'),
+(0002, '212-63-4512', '144 Colfax Rd', 'Nancy Lemon'),
+(0003, '747-00-8539', '555 Luna Rd', 'Tom Schwarts'),
+(0004, '963-52-7219', '998 Plum Grove St', 'Rachel Lime'),
+(0005, '417-77-8860', '231 Heather Ct', 'Dan Arnold'),
+(0006, '551-27-9437', '741 Kennedy Rd', 'Sally Seashell');
+
+
+INSERT INTO Customer VALUES 
+(001, 'Alice', 'Gold', '123 Main Street, Chicago', 28),
+(002, 'Bob', 'Silver', '45 Lake View Drive, Chicago', 34),
+(003, 'Carol', 'Gold', '789 Oak Lane, Evanston', 26),
+(004, 'David', 'Bronze', '56 Pine Road, Naperville', 40),
+(005, 'Emma', 'Silver', '91 River Street, Aurora', 31),
+(006, 'Frank', 'Gold', '32 Maple Avenue, Skokie', 29),
+(007, 'Grace', 'Bronze', '210 Hilltop Street, Chicago', 37);
+
+
+INSERT INTO Transaction VALUES 
+(0001, ('01/01/2025'), 'WS-001', 60, 'Credit Card', 0001, 0001,001),
+(0002, ('01/01/2025'), 'WS-002', 10, 'Check', 0002, 0004,002),
+(0003, ('01/01/2025'), 'WS-003', 45, 'Credit Card', 0003, 0004,003),
+(0004, ('01/01/2025'), 'WS-004', 105, 'Credit Card', 0002, 0004,001),
+(0005, ('01/01/2025'), 'WS-005', 25, 'Direct Deposit', 0005, 0006,004),
+(0006, ('01/01/2025'), 'WS-005', 3, 'Credit Card', 0005, 0006,005),
+(0007, ('01/01/2025'), 'WS-003', 112, 'Check', 0004, 0004,002),
+(0008, ('01/01/2025'), 'WS-005', 56, 'Cash', 0005, 0006,003),
+(0009, ('01/01/2025'), 'WS-001', 47, 'Credit Card', 0005, 0006,007),
+(0010, ('01/02/2025'), 'WS-002', 87, 'Cash', 0005, 0006, 006);
+
+INSERT INTO Store VALUES 
+(0001, '1+555-123-3456', '123 Main St', 'Jewel', 'Joe Smith'),
+(0002, '1+630-255-4788', '711 Smile St', 'Kroger', 'Bill Gates'),
+(0003, '1+224-124-7489', '411 Sad St', 'Aldi', 'Jill Bob'),
+(0004, '1+847-514-6347', '789 Smith Rd', 'Win-Dixie', 'Barb Santos'),
+(0005, '1+630-417-3697', '100 Acre Wood', 'Walmart', 'Piglet Eeyore'),
+(0006, '1+847-898-4563', '1725 Slough Avenue', 'Target', 'Michael Scott');
+
+
+INSERT INTO Product VALUES
+(1001, 'Beverage', 'Coca-Cola Can', 1.25, 'per can'),
+(1002, 'Beverage', 'Orange Juice', 3.50, 'per bottle'),
+(1003, 'Snack', 'Potato Chips', 2.00, 'per pack'),
+(1004, 'Grocery', 'Whole Wheat Bread', 2.75, 'per loaf'),
+(1005, 'Grocery', 'Brown Rice', 5.00, 'per kg'),
+(1006, 'Personal Care', 'Toothpaste', 4.25, 'per tube'),
+(1007, 'Electronics', 'AA Batteries', 7.00, 'per pack'),
+(1008, 'Stationery', 'Ballpoint Pen', 1.10, 'per piece');
+ 	
+INSERT INTO Includes VALUES
+(0001, 1001, 2),
+(0001, 1003, 1),
+(0002, 1002, 1),
+(0003, 1004, 2),
+(0004, 1005, 1),
+(0005, 1006, 1),
+(0006, 1007, 2),
+(0007, 1008, 3),
+(0008, 1001, 1),
+(0008, 1003, 1);
+
+INSERT INTO Restock VALUES
+(9001, 0001, 1001, 50, '2025-01-01'),
+(9002, 0001, 1003, 30, '2025-01-02'),
+(9003, 0002, 1002, 40, '2025-01-03'),
+(9004, 0003, 1004, 25, '2025-01-04'),
+(9005, 0004, 1005, 60, '2025-01-05'),
+(9006, 0005, 1006, 20, '2025-01-05'),
+(9007, 0005, 1007, 15, '2025-01-06'),
+(9008, 0006, 1008, 80, '2025-01-07'),
+(9009, 0004, 1001, 40, '2025-01-08'),
+(9010, 0002, 1004, 25, '2025-01-09');
+
+
